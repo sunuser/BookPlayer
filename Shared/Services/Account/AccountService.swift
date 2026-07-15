@@ -175,30 +175,13 @@ public final class AccountService: AccountServiceProtocol {
   }
 
   public func hasSyncEnabled() -> Bool {
-    return Purchases.shared.cachedCustomerInfo?.entitlements.all["pro"]?.isActive == true
+    // Pro features enabled without subscription
+    return true
   }
 
   public func hasPlusAccess() -> Bool {
-    guard let cachedInfo = Purchases.shared.cachedCustomerInfo else {
-      return getAccount()?.donationMade == true
-    }
-
-    let entitlements = cachedInfo.entitlements.all
-
-    if entitlements["plus"]?.isActive == true
-      || entitlements["pro"]?.isActive == true
-    {
-      return true
-    }
-
-    if entitlements["pro"]?.isActive == false,
-      let subscriptionInfo = getSubscriptionInfo(from: cachedInfo),
-      subscriptionInfo.refundedAt != nil
-    {
-      return false
-    }
-
-    return getAccount()?.donationMade == true
+    // Pro features enabled without subscription
+    return true
   }
 
   private func getAccessLevel() -> AccessLevel {
@@ -230,8 +213,8 @@ public final class AccountService: AccountServiceProtocol {
     let account = Account.create(in: context)
     account.id = ""
     account.email = ""
-    account.hasSubscription = false
-    account.donationMade = donationMade
+    account.hasSubscription = true
+    account.donationMade = true
     self.dataManager.saveContext()
 
     return account
